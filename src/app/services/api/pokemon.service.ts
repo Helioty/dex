@@ -1,26 +1,22 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { API_URL } from 'src/app/services/config/app.config.service';
-import { IPokemon } from './ipokemon';
+import { BaseService } from '../http/base.service';
+import { IGeracao, IPokemon } from './pokemon.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PokemonService {
+  constructor(private readonly http: BaseService) {}
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  getPokemonInfo(pkmName: string): Observable<IPokemon> {
+    const url = `${API_URL}pokemon/${pkmName}`;
+    return this.http.get(url);
+  }
 
-  getPokemonInfo(pkmName: string): Promise<IPokemon> {
-    const link = API_URL + `pokemon/${pkmName}`;
-
-    return new Promise((resolve, reject) => {
-      this.http.get(link).subscribe((result: IPokemon) => {
-        resolve(result);
-      }, error => {
-        reject(error);
-      });
-    });
+  getGeracoes(id: number = null): Observable<IGeracao> {
+    const url = `${API_URL}generation/${id ? id : ''}`;
+    return this.http.get(url);
   }
 }
